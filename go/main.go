@@ -367,3 +367,4 @@ type Clothes struct {
 
 //jjjjjjjj
 // hogehoge hugohugo
+//coordinatesに変更
