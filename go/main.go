@@ -366,3 +366,4 @@ type Clothes struct {
 }
 
 //jjjjjjjj
+// hogehoge hugohugo
