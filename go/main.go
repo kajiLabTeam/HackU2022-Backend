@@ -364,3 +364,5 @@ type Clothes struct {
 	Price    string `json:"price"`
 	Public   int    `json:"public"`
 }
+
+//jjjjjjjj
