@@ -1,9 +1,11 @@
 package main
 
 import (
-	"encoding/json"
+	"example/coordinate"
+	"example/createsql"
+	"example/like"
+	"example/user"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -26,146 +28,19 @@ func main() {
 	//postLikes(db)
 	//postCoordinate(db)
 	//getBle(db)
-	showData(db)
-	http.HandleFunc("/coordinate", coordinates)
+	//createsql.Delete(db)
+	fmt.Println("user")
+	createsql.ShowUser(db)
+	fmt.Println("coordinate")
+	createsql.ShowCoordinate(db)
+	fmt.Println("like")
+	createsql.ShowLike(db)
+	http.HandleFunc("/coordinate", coordinate.Coordinates)
+	http.HandleFunc("/coordinates/{coordinate_id}/like", coordinate.CoordinatesLike)
+	http.HandleFunc("/login", user.Login)
+	http.HandleFunc("/users/me", user.UsersMe)
+	http.HandleFunc("/likes", like.Like)
 	http.ListenAndServe(":8080", nil)
-}
-
-//coordinateのとき
-func coordinates(w http.ResponseWriter, r *http.Request) {
-	db, err := sqlConnect()
-	if err != nil {
-		panic(err.Error())
-	} else {
-		log.Print("seikou!")
-	}
-	defer db.Close()
-
-	//GETのとき
-	if r.Method == "GET" {
-		fmt.Fprintf(w, "Hello World! GET")
-	}
-
-	//POSTのとき
-	if r.Method == "POST" {
-
-		// リクエストボディを読み込む
-		body, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			fmt.Fprintf(w, "Error: %v", err)
-			return
-		}
-		//構造体を定義
-		// var person Person
-		clothes := Clothes{}
-		// jsonを構造体に変換
-		err = json.Unmarshal(body, &clothes)
-		if err != nil {
-			fmt.Fprintf(w, "Error: %v", err)
-			return
-		}
-		//構造体をjsonに変換
-		/*
-			json, err := json.Marshal(clothes)
-			if err != nil {
-				fmt.Fprintf(w, "Error: %v", err)
-				return
-			}*/
-
-		//全てのput_flagを１にする
-		updatePutFlag(db)
-		//shortid作成
-		sid, err := shortid.New(1, shortid.DefaultABC, 2342)
-		if err != nil {
-			panic(err.Error())
-		}
-		//Coordinate_idを同じ服のとき同じにするため保存しておく
-		shortId := sid.MustGenerate()
-		//それぞれのデータをとってきたデータにして登録
-		error := db.Create(&Coordinates{
-			Id:            sid.MustGenerate(),
-			Coordinate_id: shortId,
-			User_id:       clothes.User_id,
-			Put_flag:      2,
-			Public:        clothes.Public,
-			Image:         clothes.Image,
-			Category:      clothes.Category,
-			Brand:         clothes.Brand,
-			Price:         clothes.Price,
-			CreatedAt:     getDate(),
-			UpdatedAt:     getDate(),
-		}).Error
-		if error != nil {
-			fmt.Println(error)
-		} else {
-			fmt.Println("データ追加成功")
-		}
-	}
-}
-
-func login(w http.ResponseWriter, r *http.Request) {
-	db, err := sqlConnect()
-	if err != nil {
-		panic(err.Error())
-	} else {
-		log.Print("seikou!")
-	}
-	defer db.Close()
-
-	//GETのとき
-	if r.Method == "GET" {
-		fmt.Fprintf(w, "Hello World! GET")
-	}
-
-	//POSTのとき
-	if r.Method == "POST" {
-
-		// リクエストボディを読み込む
-		body, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			fmt.Fprintf(w, "Error: %v", err)
-			return
-		}
-		//構造体を定義
-		// var person Person
-		user1 := Requestuser{}
-		// jsonを構造体に変換
-		err = json.Unmarshal(body, &user1)
-		if err != nil {
-			fmt.Fprintf(w, "Error: %v", err)
-			return
-		}
-		//構造体をjsonに変換
-		/*
-			json, err := json.Marshal(clothes)
-			if err != nil {
-				fmt.Fprintf(w, "Error: %v", err)
-				return
-			}*/
-		//shortid作成
-		sid, err := shortid.New(1, shortid.DefaultABC, 2342)
-		if err != nil {
-			panic(err.Error())
-		}
-		//それぞれのデータをとってきたデータにして登録
-		error := db.Create(&Users{
-			Id:        sid.MustGenerate(),
-			Name:      user1.Name,
-			Gender:    user1.Gender,
-			Age:       user1.Age,
-			Height:    user1.Height,
-			Uuid:      user1.Uuid,
-			Mail:      user1.Mail,
-			Icon:      user1.Icon,
-			CreatedAt: getDate(),
-			UpdatedAt: getDate(),
-		}).Error
-		if error != nil {
-			fmt.Println(error)
-		} else {
-			fmt.Println("データ追加成功")
-		}
-	}
 }
 
 //usersテーブルのデータを作成
