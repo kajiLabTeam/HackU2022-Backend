@@ -16,18 +16,21 @@ import (
 func Login(w http.ResponseWriter, r *http.Request) {
 	db, err := createsql.SqlConnect()
 	if err != nil {
-		panic(err.Error())
+		json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+		fmt.Fprintln(w, json_str)
+		return
 	} else {
 		log.Print("seikou!")
 	}
 	defer db.Close()
 
-	//GETのとき
+	//POSTのとき
 	if r.Method == "POST" {
 		// リクエストボディを読み込む
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			fmt.Fprintf(w, "Error: %v", err)
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
 			return
 		}
 		//構造体を定義
@@ -36,15 +39,18 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		// jsonを構造体に変換
 		err = json.Unmarshal(body, &user)
 		if err != nil {
-			fmt.Fprintf(w, "Error: %v", err)
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
 			return
 		}
 		sid, err := shortid.New(1, shortid.DefaultABC, 2342)
 		if err != nil {
-			panic(err.Error())
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
+			return
 		}
 		//それぞれのデータをとってきたデータにして登録
-		error := db.Create(&model.Users{
+		err = db.Create(&model.Users{
 			Id:        sid.MustGenerate(),
 			Name:      user.Name,
 			Gender:    user.Gender,
@@ -56,17 +62,17 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			CreatedAt: createsql.GetDate(),
 			UpdatedAt: createsql.GetDate(),
 		}).Error
-		if error != nil {
-			fmt.Println(error)
-
-			json_str := `{"status":false,"message":"` + string(error.Error()) + `"}`
+		if err != nil {
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
 			fmt.Fprintln(w, json_str)
-
-			fmt.Fprintln(w, "status:false")
+			return
+			/*
+				json_str := `{"status":false,"message":"` + string(error.Error()) + `"}`
+				fmt.Fprintln(w, json_str)
+			*/
 		} else {
 			json_str := `{"status":"true"}`
-			fmt.Fprintf(w, json_str)
-			fmt.Println("データ追加成功")
+			fmt.Fprintln(w, json_str)
 		}
 		createsql.ShowUser(db)
 
@@ -76,7 +82,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 func UsersMe(w http.ResponseWriter, r *http.Request) {
 	db, err := createsql.SqlConnect()
 	if err != nil {
-		panic(err.Error())
+		json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+		fmt.Fprintln(w, json_str)
+		return
 	} else {
 		log.Print("seikou!")
 	}
@@ -87,7 +95,8 @@ func UsersMe(w http.ResponseWriter, r *http.Request) {
 		// リクエストボディを読み込む
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			fmt.Fprintf(w, "Error: %v", err)
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
 			return
 		}
 		//構造体を定義
@@ -96,10 +105,11 @@ func UsersMe(w http.ResponseWriter, r *http.Request) {
 		// jsonを構造体に変換
 		err = json.Unmarshal(body, &user)
 		if err != nil {
-			fmt.Fprintf(w, "Error: %v", err)
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
 			return
 		}
-		error := db.Model(model.Users{}).Where("id = ?", user.Id).Updates(model.Users{
+		err = db.Model(model.Users{}).Where("id = ?", user.Id).Updates(model.Users{
 			Name:      user.Name,
 			Icon:      user.Icon,
 			Gender:    user.Gender,
@@ -107,16 +117,15 @@ func UsersMe(w http.ResponseWriter, r *http.Request) {
 			Height:    user.Height,
 			UpdatedAt: createsql.GetDate(),
 		}).Error
-		if error != nil {
-			fmt.Println(error)
-			json_str := `{"status":false,"message":"` + string(error.Error()) + `"}`
+		if err != nil {
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
 			fmt.Fprintln(w, json_str)
+			return
 
-			fmt.Fprintln(w, "status:false")
+			//fmt.Fprintln(w, "status:false")
 		} else {
 			json_str := `{"status":"true"}`
-			fmt.Fprintf(w, json_str)
-			fmt.Println("データ追加成功")
+			fmt.Fprintln(w, json_str)
 		}
 		createsql.ShowUser(db)
 	}
