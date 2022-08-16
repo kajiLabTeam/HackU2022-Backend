@@ -18,6 +18,21 @@ type Users struct {
 	UpdatedAt string `json:"update_at" sql:"not null;type:date"`
 }
 
+//ユーザーの情報をresponseで返すための構造体
+type UsersAddStatus struct {
+	Id        string `json:"id"`
+	Name      string `json:"name"`
+	Gender    int    `json:"gender"`
+	Age       string `json:"age"`
+	Height    int    `json:"height"`
+	Uuid      string `json:"uuid"`
+	Mail      string `json:"mail"`
+	Icon      string `json:"icon"`
+	Status    string `json:"status"`
+	CreatedAt string `json:"created_at" sql:"not null;type:date"`
+	UpdatedAt string `json:"update_at" sql:"not null;type:date"`
+}
+
 // Coordinates コーディネート情報のテーブル情報
 type Likes struct {
 	Id            string `json:"id"`
@@ -65,14 +80,4 @@ type Clothes struct {
 	Brand    string `json:"brand"`
 	Price    string `json:"price"`
 	Public   int    `json:"public"`
-}
-
-//bleのuuid
-type Ble struct {
-	Ble string `json:"ble"`
-}
-
-type Message struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
 }

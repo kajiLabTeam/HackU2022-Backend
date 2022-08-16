@@ -24,6 +24,58 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
+	//GETのとき
+	if r.Method == "GET" {
+
+		//fmt.Println(r.URL.Query().Get("id"))
+		/*
+			// リクエストボディを読み込む
+			body, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				fmt.Fprintf(w, "Error: %v", err)
+				return
+			}
+			//構造体を定義
+			user := model.Users{}
+			// jsonを構造体に変換
+			err = json.Unmarshal(body, &user)
+			if err != nil {
+				fmt.Fprintf(w, "Error: %v", err)
+				return
+			}
+		*/
+
+		//paramからidを受け取り、そのidのユーザーの服の情報、どこで評価されたかを全て表示
+		//ユーザーの服の情報を返す
+		w.Header().Set("Content-Type", "application/json")
+		result := model.Users{}
+		err = db.Model(model.Users{}).Where("mail = ?", r.URL.Query().Get("mail")).Find(&result).Error
+		if err != nil {
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
+			fmt.Fprintln(w, "unti")
+			return
+		}
+		result1 := model.UsersAddStatus{}
+		result1.Id = result.Id
+		result1.Name = result.Name
+		result1.Gender = result.Gender
+		result1.Age = result.Age
+		result1.Height = result.Height
+		result1.Uuid = result.Uuid
+		result1.Mail = result.Mail
+		result1.Icon = result.Icon
+		result1.Status = "true"
+
+		json, err := json.Marshal(result1)
+		if err != nil {
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
+			return
+		}
+		fmt.Fprintln(w, string(json))
+	}
+
 	//POSTのとき
 	if r.Method == "POST" {
 		// リクエストボディを読み込む

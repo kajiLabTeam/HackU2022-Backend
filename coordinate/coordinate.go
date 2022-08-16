@@ -47,7 +47,12 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
 		result := []*model.Coordinates{}
-		db.Model(model.Coordinates{}).Where("ble = ? AND put_flag = ?", r.URL.Query().Get("ble"), 2).Find(&result)
+		err = db.Model(model.Coordinates{}).Where("ble = ? AND put_flag = ?", r.URL.Query().Get("ble"), 2).Find(&result).Error
+		if err != nil {
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
+			return
+		}
 		for _, coordinate := range result {
 			js, err := json.Marshal(coordinate)
 			if err != nil {
@@ -63,7 +68,12 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 
 		//fmt.Println(result)
 		var result1 model.Users
-		db.Model(model.Users{}).Where("id = ?", result[0].User_id).First(&result1)
+		err = db.Model(model.Users{}).Where("id = ?", result[0].User_id).First(&result1).Error
+		if err != nil {
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
+			return
+		}
 		js, err := json.Marshal(result1)
 		if err != nil {
 			//http.Error(w, err.Error(), http.StatusInternalServerError)
