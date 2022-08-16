@@ -71,3 +71,8 @@ type Clothes struct {
 type Ble struct {
 	Ble string `json:"ble"`
 }
+
+type Message struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
