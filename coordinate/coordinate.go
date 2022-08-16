@@ -26,24 +26,26 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 
 	//GETのとき
 	if r.Method == "GET" {
-		// リクエストボディを読み込む
-		body, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			fmt.Fprintf(w, "Error: %v", err)
-			return
-		}
-		//構造体を定義
-		ble := model.Ble{}
-		// jsonを構造体に変換
-		err = json.Unmarshal(body, &ble)
-		if err != nil {
-			fmt.Fprintf(w, "Error: %v", err)
-			return
-		}
+		/*
+			// リクエストボディを読み込む
+			body, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				fmt.Fprintf(w, "Error: %v", err)
+				return
+			}
+			//構造体を定義
+			ble := model.Ble{}
+			// jsonを構造体に変換
+			err = json.Unmarshal(body, &ble)
+			if err != nil {
+				fmt.Fprintf(w, "Error: %v", err)
+				return
+			}
+		*/
 
 		w.Header().Set("Content-Type", "application/json")
 		result := []*model.Coordinates{}
-		db.Model(model.Coordinates{}).Where("ble = ? AND put_flag = ?", ble.Ble, 2).Find(&result)
+		db.Model(model.Coordinates{}).Where("ble = ? AND put_flag = ?", r.URL.Query().Get("ble"), 2).Find(&result)
 		for _, coordinate := range result {
 			js, err := json.Marshal(coordinate)
 			if err != nil {
