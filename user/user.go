@@ -58,10 +58,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		}).Error
 		if error != nil {
 			fmt.Println(error)
+			fmt.Fprintf(w, "status:NG")
 		} else {
+			fmt.Fprintf(w, "status:OK")
 			fmt.Println("データ追加成功")
 		}
 		createsql.ShowUser(db)
+
 	}
 }
 
