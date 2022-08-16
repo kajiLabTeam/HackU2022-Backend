@@ -72,6 +72,7 @@ type Requestuser struct {
 	Icon   string `json:"icon"`
 }
 
+/*
 // 服の情報
 type Clothes struct {
 	User_id  string `json:"user_id"`
@@ -81,21 +82,27 @@ type Clothes struct {
 	Price    string `json:"price"`
 	Public   int    `json:"public"`
 }
+*/
 
+//服のコーディネート情報
 type CoordinatesAdd struct {
-	Id            string `json:"id"`
-	Coordinate_id string `json:"coordinate_id"`
-	User_id       string `json:"user_id"`
-	Put_flag      int    `json:"put_flag"`
-	Public        int    `json:"public"`
-	Image         string `json:"image"`
-	Item          []Item `json:item`
-
-	Ble string `json:"ble"`
+	User_id string `json:"user_id"`
+	Ble     string `json:"ble"`
+	Public  int    `json:"public"`
+	Image   string `json:"image"`
+	Item    []Item `json:item`
 }
 
+//服の情報
 type Item struct {
 	Category string `json:"category"`
 	Brand    string `json:"brand"`
 	Price    string `json:"price"`
+}
+
+type Ble struct {
+	Coordinate_id string `json:"coordinate_id"`
+	Image         string `json:"image"`
+	Item          []Item `json:item`
+	Users         Users  `json:users`
 }
