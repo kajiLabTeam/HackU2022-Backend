@@ -47,7 +47,12 @@ func Like(w http.ResponseWriter, r *http.Request) {
 		//ユーザーの服の情報を返す
 		w.Header().Set("Content-Type", "application/json")
 		result := []*model.Coordinates{}
-		db.Model(model.Coordinates{}).Where("user_id = ?", r.URL.Query().Get("id")).Find(&result)
+		err = db.Model(model.Coordinates{}).Where("user_id = ?", r.URL.Query().Get("id")).Find(&result).Error
+		if err != nil {
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
+			return
+		}
 		json, err := json.Marshal(result)
 		if err != nil {
 			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
