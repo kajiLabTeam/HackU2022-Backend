@@ -104,8 +104,10 @@ func UsersMe(w http.ResponseWriter, r *http.Request) {
 		}).Error
 		if error != nil {
 			fmt.Println(error)
+			fmt.Fprintf(w, "status:NG")
 		} else {
 			fmt.Println("データ編集成功")
+			fmt.Fprintf(w, "status:OK")
 		}
 		createsql.ShowUser(db)
 	}
