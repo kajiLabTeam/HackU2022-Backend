@@ -81,3 +81,21 @@ type Clothes struct {
 	Price    string `json:"price"`
 	Public   int    `json:"public"`
 }
+
+type CoordinatesAdd struct {
+	Id            string `json:"id"`
+	Coordinate_id string `json:"coordinate_id"`
+	User_id       string `json:"user_id"`
+	Put_flag      int    `json:"put_flag"`
+	Public        int    `json:"public"`
+	Image         string `json:"image"`
+	Item          []Item `json:item`
+
+	Ble string `json:"ble"`
+}
+
+type Item struct {
+	Category string `json:"category"`
+	Brand    string `json:"brand"`
+	Price    string `json:"price"`
+}
