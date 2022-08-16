@@ -131,6 +131,8 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 				fmt.Println("データ追加成功")
 			}
 		}
+				json_str := `{"status":"true"}`
+				fmt.Fprintln(w, json_str)
 
 		createsql.ShowCoordinate(db)
 	}
