@@ -14,7 +14,9 @@ import (
 func Like(w http.ResponseWriter, r *http.Request) {
 	db, err := createsql.SqlConnect()
 	if err != nil {
-		panic(err.Error())
+		json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+		fmt.Fprintln(w, json_str)
+		return
 	} else {
 		log.Print("seikou!")
 	}
@@ -48,10 +50,14 @@ func Like(w http.ResponseWriter, r *http.Request) {
 		db.Model(model.Coordinates{}).Where("user_id = ?", r.URL.Query().Get("id")).Find(&result)
 		json, err := json.Marshal(result)
 		if err != nil {
-			fmt.Fprintf(w, "Error: %v", err)
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
 			return
 		}
+
 		fmt.Fprintln(w, string(json))
+		json_str := `{"status":"true"}`
+		fmt.Fprintln(w, json_str)
 
 		/*
 			for _, coordinate := range result {
