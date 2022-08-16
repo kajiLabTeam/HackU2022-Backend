@@ -123,7 +123,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintln(w, json_str)
 			*/
 		} else {
-			json_str := `{"status":"true"}`
+			json_str := `{"status":"true","id":"` + user.Id + `"}`
 			fmt.Fprintln(w, json_str)
 		}
 		createsql.ShowUser(db)

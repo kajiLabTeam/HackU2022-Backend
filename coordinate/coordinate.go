@@ -101,7 +101,7 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 		}
 		//fmt.Fprintln(w, string(body))
 		//構造体を定義
-		clothes := []*model.Clothes{}
+		clothes := model.CoordinatesAdd{}
 		// jsonを構造体に変換
 		err = json.Unmarshal(body, &clothes)
 		if err != nil {
@@ -109,7 +109,7 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintln(w, json_str)
 			return
 		}
-		//fmt.Fprintln(w, string(body))
+		//fmt.Fprintln(w, clothes)
 		/*
 			//構造体をjsonに変換
 			json, err := json.Marshal(clothes)
@@ -132,18 +132,18 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 		//Coordinate_idを同じ服のとき同じにするため保存しておく
 		shortId := sid.MustGenerate()
 		uuid := uuid.New()
-		for i := 0; i < len(clothes); i++ {
+		for i := 0; i < len(clothes.Item); i++ {
 			//それぞれのデータをとってきたデータにして登録
 			err := db.Create(&model.Coordinates{
 				Id:            sid.MustGenerate(),
 				Coordinate_id: shortId,
-				User_id:       clothes[i].User_id,
+				User_id:       clothes.User_id,
 				Put_flag:      2,
-				Public:        clothes[i].Public,
-				Image:         clothes[i].Image,
-				Category:      clothes[i].Category,
-				Brand:         clothes[i].Brand,
-				Price:         clothes[i].Price,
+				Public:        clothes.Public,
+				Image:         clothes.Image,
+				Category:      clothes.Item[i].Category,
+				Brand:         clothes.Item[i].Brand,
+				Price:         clothes.Item[i].Price,
 				Ble:           uuid.String(),
 				CreatedAt:     createsql.GetDate(),
 				UpdatedAt:     createsql.GetDate(),
@@ -153,10 +153,9 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintln(w, json_str)
 				return
 			}
-			json_str := `{"status":"true"}`
-			fmt.Fprintln(w, json_str)
 		}
-
+		json_str := `{"status":"true"}`
+		fmt.Fprintln(w, json_str)
 		createsql.ShowCoordinate(db)
 	}
 }

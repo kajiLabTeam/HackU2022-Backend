@@ -90,8 +90,6 @@ type CoordinatesAdd struct {
 	Public        int    `json:"public"`
 	Image         string `json:"image"`
 	Item          []Item `json:item`
-
-	Ble string `json:"ble"`
 }
 
 type Item struct {
