@@ -58,9 +58,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		}).Error
 		if error != nil {
 			fmt.Println(error)
-			fmt.Fprintf(w, "status:NG")
+
+			json_str := `{"status":false,"message":"` + string(error.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
+
+			fmt.Fprintln(w, "status:false")
 		} else {
-			fmt.Fprintf(w, "status:OK")
+			json_str := `{"status":"true"}`
+			fmt.Fprintf(w, json_str)
 			fmt.Println("データ追加成功")
 		}
 		createsql.ShowUser(db)
@@ -104,10 +109,14 @@ func UsersMe(w http.ResponseWriter, r *http.Request) {
 		}).Error
 		if error != nil {
 			fmt.Println(error)
-			fmt.Fprintf(w, "status:NG")
+			json_str := `{"status":false,"message":"` + string(error.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
+
+			fmt.Fprintln(w, "status:false")
 		} else {
-			fmt.Println("データ編集成功")
-			fmt.Fprintf(w, "status:OK")
+			json_str := `{"status":"true"}`
+			fmt.Fprintf(w, json_str)
+			fmt.Println("データ追加成功")
 		}
 		createsql.ShowUser(db)
 	}
