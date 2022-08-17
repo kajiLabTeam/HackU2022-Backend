@@ -169,7 +169,7 @@ func CoordinatesLike(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintln(w, json_str)
 			return
 		}
-		fmt.Fprintln(w, string(body))
+		//fmt.Fprintln(w, string(body))
 		/*
 			//構造体をjsonに変換
 			json, err := json.Marshal(clothes)
