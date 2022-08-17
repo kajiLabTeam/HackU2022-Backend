@@ -10,7 +10,6 @@ import (
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/google/uuid"
 	"github.com/teris-io/shortid"
 )
 
@@ -28,80 +27,44 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 
 	//GETのとき
 	if r.Method == "GET" {
-		// リクエストボディを読み込む
-		/*
-		   body, err := ioutil.ReadAll(r.Body)
-		   if err != nil {
-		       fmt.Fprintf(w, "Error: %v", err)
-		       return
-		   }
-		   //構造体を定義
-		   ble := model.Ble{}
-		   // jsonを構造体に変換
-		   err = json.Unmarshal(body, &ble)
-		   if err != nil {
-		       fmt.Fprintf(w, "Error: %v", err)
-		       return
-		   }
-		*/
 
 		w.Header().Set("Content-Type", "application/json")
+		//fmt.Fprintln(w, r.URL.Query().Get("ble"))
+		//クエリパラメータのbleUuidに一致していて、尚且つ今きている服の情報を取得
 		result := []*model.Coordinates{}
-		db.Model(model.Coordinates{}).Where("ble = ? AND put_flag = ?", r.URL.Query().Get("ble"), 2).Find(&result)
-		/*if err != nil {
-		      json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-		      fmt.Fprintln(w, json_str)
-		      return
-		  }
-		*/
-		ble := model.Ble{}
-		ble.Coordinate_id = result[0].Coordinate_id
-		ble.Image = result[0].Image
+		err := db.Model(model.Coordinates{}).Where("ble = ? AND put_flag = ?", r.URL.Query().Get("ble"), 2).Find(&result).Error
+		if err != nil {
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
+			return
+		}
+		//服の情報にあるuser_idからユーザー情報を取得
+		result1 := model.Users{}
+		err = db.Model(model.Coordinates{}).Where("id = ?", result[0].User_id).First(&result1).Error
+		if err != nil {
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
+			return
+		}
+
+		//服の情報を登録しているデータベースから個別のアイテムのデータを配列に挿入
+		p := []*model.Item{}
 		for i := 0; i < len(result); i++ {
-			ble.Item[i].Category = result[i].Category
-			ble.Item[i].Brand = result[i].Brand
-			ble.Item[i].Price = result[i].Price
+			p = append(p, &model.Item{Category: result[i].Category, Brand: result[i].Brand, Price: result[i].Price})
 		}
-		/*
-		   for _, coordinate := range result {
-		       js, err := json.Marshal(coordinate)
-		       if err != nil {
-		           //http.Error(w, err.Error(), http.StatusInternalServerError)
-		           json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-		           fmt.Fprintln(w, json_str)
-		           return
-		       }
-		       w.Write(js)
-		       fmt.Println(coordinate)
-		   }
-		*/
-		// SELECT * FROM coordinates WHERE ble = c1;
 
-		//fmt.Println(result)
-		var result1 model.Users
-		err = db.Model(model.Users{}).Where("id = ?", result[0].User_id).First(&result1).Error
+		//p := model.Item{Category: "category", Brand: "brand", Price: "price"}
+
+		//服のid、服の写真、服のアイテム、ユーザー情報をまとめた構造体に変換し、json型にする
+		ble := model.Ble{Coordinate_id: result[0].Coordinate_id, Image: result[0].Image, Items: p, Users: result1}
+
+		json, err := json.Marshal(ble)
 		if err != nil {
 			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
 			fmt.Fprintln(w, json_str)
 			return
 		}
-		ble.Users.Id = result1.Id
-		ble.Users.Name = result1.Name
-		ble.Users.Gender = result1.Gender
-		ble.Users.Age = result1.Age
-		ble.Users.Height = result1.Height
-		ble.Users.Icon = result1.Icon
-		js, err := json.Marshal(ble)
-		if err != nil {
-			//http.Error(w, err.Error(), http.StatusInternalServerError)
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
-			return
-		}
-
-		w.Write(js)
-		json_str := `{"status":"true"}`
-		fmt.Fprintln(w, json_str)
+		fmt.Fprintln(w, string(json))
 
 	}
 
@@ -147,8 +110,8 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 		}
 		//Coordinate_idを同じ服のとき同じにするため保存しておく
 		shortId := sid.MustGenerate()
-		uuid := uuid.New()
-		for i := 0; i < len(clothes.Item); i++ {
+		//fmt.Fprintln(w, clothes)
+		for i := 0; i < len(clothes.Items); i++ {
 			//それぞれのデータをとってきたデータにして登録
 			err := db.Create(&model.Coordinates{
 				Id:            sid.MustGenerate(),
@@ -157,10 +120,10 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 				Put_flag:      2,
 				Public:        clothes.Public,
 				Image:         clothes.Image,
-				Category:      clothes.Item[i].Category,
-				Brand:         clothes.Item[i].Brand,
-				Price:         clothes.Item[i].Price,
-				Ble:           uuid.String(),
+				Category:      clothes.Items[i].Category,
+				Brand:         clothes.Items[i].Brand,
+				Price:         clothes.Items[i].Price,
+				Ble:           clothes.Ble,
 				CreatedAt:     createsql.GetDate(),
 				UpdatedAt:     createsql.GetDate(),
 			}).Error
@@ -240,7 +203,7 @@ func CoordinatesLike(w http.ResponseWriter, r *http.Request) {
 			return
 		} else {
 			json_str := `{"status":"true"}`
-			fmt.Fprintf(w, json_str)
+			fmt.Fprintln(w, json_str)
 
 		}
 
