@@ -90,7 +90,7 @@ type CoordinatesAdd struct {
 	Ble     string `json:"ble"`
 	Public  int    `json:"public"`
 	Image   string `json:"image"`
-	Item    []Item `json:item`
+	Items   []Item `json:items`
 }
 
 //服の情報
@@ -101,8 +101,8 @@ type Item struct {
 }
 
 type Ble struct {
-	Coordinate_id string `json:"coordinate_id"`
-	Image         string `json:"image"`
-	Item          []Item `json:item`
-	Users         Users  `json:users`
+	Coordinate_id string  `json:"coordinate_id"`
+	Image         string  `json:"image"`
+	Items         []*Item `json:items`
+	Users         Users   `json:users`
 }
