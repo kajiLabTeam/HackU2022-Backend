@@ -1,5 +1,7 @@
 github.com/PuerkitoBio/goquery v1.5.1/go.mod h1:GsLWisAFVj4WgDibEWF4pvYnkVQBpKBKeU+7zCJoLcc=
 github.com/andybalholm/cascadia v1.1.0/go.mod h1:GsXiBklL0woXo1j/WYWtSYYC4ouU9PqHO0sqidkEA4Y=
+github.com/cloudflare/cloudflared v0.0.0-20220816170754-8e9e1d973e63 h1:NhRDuootrvnk/ULS1f6y9LFPyNRa5kuw/X+ivveBR4Q=
+github.com/cloudflare/cloudflared v0.0.0-20220816170754-8e9e1d973e63/go.mod h1:DEEiy09Kpns/hqGoZJBPIX1t7NLgZJe5EO8MQqh/JaQ=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
