@@ -56,7 +56,7 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 		//p := model.Item{Category: "category", Brand: "brand", Price: "price"}
 
 		//服のid、服の写真、服のアイテム、ユーザー情報をまとめた構造体に変換し、json型にする
-		ble := model.Ble{Coordinate_id: result[0].Coordinate_id, Image: result[0].Image, Items: p, Users: result1}
+		ble := model.Ble{Coordinate_id: result[0].Coordinate_id, Image: result[0].Image, Items: p, Users: result1, Status: "true"}
 
 		json, err := json.Marshal(ble)
 		if err != nil {

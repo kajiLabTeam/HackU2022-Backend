@@ -20,17 +20,15 @@ type Users struct {
 
 //ユーザーの情報をresponseで返すための構造体
 type UsersAddStatus struct {
-	Id        string `json:"id"`
-	Name      string `json:"name"`
-	Gender    int    `json:"gender"`
-	Age       string `json:"age"`
-	Height    int    `json:"height"`
-	Uuid      string `json:"uuid"`
-	Mail      string `json:"mail"`
-	Icon      string `json:"icon"`
-	Status    string `json:"status"`
-	CreatedAt string `json:"created_at" sql:"not null;type:date"`
-	UpdatedAt string `json:"update_at" sql:"not null;type:date"`
+	Id     string `json:"id"`
+	Name   string `json:"name"`
+	Gender int    `json:"gender"`
+	Age    string `json:"age"`
+	Height int    `json:"height"`
+	Uuid   string `json:"uuid"`
+	Mail   string `json:"mail"`
+	Icon   string `json:"icon"`
+	Status string `json:"status"`
 }
 
 // Coordinates コーディネート情報のテーブル情報
@@ -105,4 +103,5 @@ type Ble struct {
 	Image         string  `json:"image"`
 	Items         []*Item `json:items`
 	Users         Users   `json:users`
+	Status        string  `json:status`
 }

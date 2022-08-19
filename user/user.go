@@ -65,6 +65,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		result1.Uuid = result.Uuid
 		result1.Mail = result.Mail
 		result1.Icon = result.Icon
+
 		result1.Status = "true"
 
 		json, err := json.Marshal(result1)
@@ -101,6 +102,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintln(w, json_str)
 			return
 		}
+		shortId := sid.MustGenerate()
 		//それぞれのデータをとってきたデータにして登録
 		err = db.Create(&model.Users{
 			Id:        sid.MustGenerate(),
@@ -123,7 +125,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintln(w, json_str)
 			*/
 		} else {
-			json_str := `{"status":"true","id":"` + user.Id + `"}`
+			json_str := `{"status":"true","id":"` + shortId + `"}`
 			fmt.Fprintln(w, json_str)
 		}
 		createsql.ShowUser(db)

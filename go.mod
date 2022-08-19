@@ -5,6 +5,7 @@ go 1.18
 require github.com/go-sql-driver/mysql v1.6.0
 
 require (
+	github.com/cloudflare/cloudflared v0.0.0-20220816170754-8e9e1d973e63 // indirect
 	github.com/dylang/shortid v0.0.0-20201021194157-937ce2c8dd70 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.8.1 // indirect
