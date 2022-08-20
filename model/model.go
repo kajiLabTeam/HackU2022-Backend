@@ -45,7 +45,6 @@ type Likes struct {
 
 // Coordinates コーディネート情報のテーブル情報
 type Coordinates struct {
-	Id            string `json:"id"`
 	Coordinate_id string `json:"coordinate_id"`
 	User_id       string `json:"user_id"`
 	Put_flag      int    `json:"put_flag"`
@@ -104,4 +103,24 @@ type Ble struct {
 	Items         []*Item `json:items`
 	Users         Users   `json:users`
 	Status        string  `json:status`
+}
+
+type Liked_user struct {
+	Gender int    `json:"gender"`
+	Age    string `json:"age"`
+	Height int    `json:"height"`
+	Lat    string `json:"lat"`
+	Lng    string `json:"lng"`
+}
+
+type Map struct {
+	Coordinate_id string        `json:"coordinate_id"`
+	User_id       string        `json:"user_id"`
+	Image         string        `json:"image"`
+	Liked_users   []*Liked_user `json:liked_users`
+}
+
+type Maps struct {
+	Maps   []*Map `json:"map"`
+	Status string `json:status`
 }

@@ -32,7 +32,7 @@ CREATE TABLE likes (
 
 DROP TABLE IF EXISTS coordinate;
 CREATE TABLE coordinates (
-    `id` VARCHAR(20),
+    `id` INT NOT NULL AUTO_INCREMENT,
     `coordinate_id` VARCHAR(20),
     `user_id` VARCHAR(20),
     `put_flag` INT(1),
