@@ -53,7 +53,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
 			fmt.Fprintln(w, json_str)
-			fmt.Fprintln(w, "unti")
 			return
 		}
 		result1 := model.UsersAddStatus{}

@@ -29,10 +29,18 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 
 		w.Header().Set("Content-Type", "application/json")
-		//fmt.Fprintln(w, r.URL.Query().Get("ble"))
+
 		//クエリパラメータのbleUuidに一致していて、尚且つ今きている服の情報を取得
+		//配列の構造体で受け取るとエラーが判定されないため一度ここで該当するデータがあるか判定する
+		result_test := model.Coordinates{}
+		err := db.Where("ble = ? AND put_flag = ?", r.URL.Query().Get("ble"), 2).Find(&result_test).Error
+		if err != nil {
+			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+			fmt.Fprintln(w, json_str)
+			return
+		}
 		result := []*model.Coordinates{}
-		err := db.Model(model.Coordinates{}).Where("ble = ? AND put_flag = ?", r.URL.Query().Get("ble"), 2).Find(&result).Error
+		err = db.Where("ble = ? AND put_flag = ?", r.URL.Query().Get("ble"), 2).Find(&result).Error
 		if err != nil {
 			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
 			fmt.Fprintln(w, json_str)
@@ -40,7 +48,7 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 		}
 		//服の情報にあるuser_idからユーザー情報を取得
 		result1 := model.Users{}
-		err = db.Model(model.Coordinates{}).Where("id = ?", result[0].User_id).First(&result1).Error
+		err = db.Where("id = ?", result[0].User_id).First(&result1).Error
 		if err != nil {
 			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
 			fmt.Fprintln(w, json_str)
