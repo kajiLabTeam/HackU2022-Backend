@@ -49,7 +49,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		//ユーザーの服の情報を返す
 		w.Header().Set("Content-Type", "application/json")
 		result := model.Users{}
-		err = db.Model(model.Users{}).Where("mail = ?", r.URL.Query().Get("mail")).Find(&result).Error
+		err = db.Where("mail = ?", r.URL.Query().Get("mail")).Find(&result).Error
 		if err != nil {
 			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
 			fmt.Fprintln(w, json_str)
@@ -104,7 +104,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		shortId := sid.MustGenerate()
 		//それぞれのデータをとってきたデータにして登録
 		err = db.Create(&model.Users{
-			Id:        sid.MustGenerate(),
+			Id:        shortId,
 			Name:      user.Name,
 			Gender:    user.Gender,
 			Age:       user.Age,

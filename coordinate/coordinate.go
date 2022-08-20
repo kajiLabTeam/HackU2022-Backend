@@ -37,6 +37,7 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
 			fmt.Fprintln(w, json_str)
+
 			return
 		}
 		result := []*model.Coordinates{}
@@ -46,6 +47,7 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintln(w, json_str)
 			return
 		}
+		//fmt.Fprintln(w, result[0])
 		//服の情報にあるuser_idからユーザー情報を取得
 		result1 := model.Users{}
 		err = db.Where("id = ?", result[0].User_id).First(&result1).Error
@@ -108,7 +110,7 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 		*/
 
 		//全てのput_flagを１にする
-		createsql.UpdatePutFlag(db)
+		createsql.UpdatePutFlag(db, clothes.User_id)
 		//shortid作成
 		sid, err := shortid.New(1, shortid.DefaultABC, 2342)
 		if err != nil {
@@ -122,7 +124,6 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 		for i := 0; i < len(clothes.Items); i++ {
 			//それぞれのデータをとってきたデータにして登録
 			err := db.Create(&model.Coordinates{
-				Id:            sid.MustGenerate(),
 				Coordinate_id: shortId,
 				User_id:       clothes.User_id,
 				Put_flag:      2,
