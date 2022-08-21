@@ -196,14 +196,14 @@ func CoordinatesLike(w http.ResponseWriter, r *http.Request) {
 		}
 		//それぞれのデータをとってきたデータにして登録
 		err = db.Create(&model.Likes{
-			Id:            sid.MustGenerate(),
-			Coordinate_id: like.Coordinate_id,
-			Liked_user_id: like.Liked_user_id,
-			User_id:       like.User_id,
-			Lat:           like.Lat,
-			Lng:           like.Lng,
-			CreatedAt:     createsql.GetDate(),
-			UpdatedAt:     createsql.GetDate(),
+			Id:              sid.MustGenerate(),
+			Coordinate_id:   like.Coordinate_id,
+			Send_user_id:    like.Send_user_id,
+			Receive_user_id: like.Receive_user_id,
+			Lat:             like.Lat,
+			Lng:             like.Lng,
+			CreatedAt:       createsql.GetDate(),
+			UpdatedAt:       createsql.GetDate(),
 		}).Error
 		if err != nil {
 			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}

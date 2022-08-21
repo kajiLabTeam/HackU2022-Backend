@@ -33,14 +33,14 @@ type UsersAddStatus struct {
 
 // Coordinates コーディネート情報のテーブル情報
 type Likes struct {
-	Id            string `json:"id"`
-	Coordinate_id string `json:"coordinate_id"`
-	Liked_user_id string `json:"liked_user_id"`
-	User_id       string `json:"user_id"`
-	Lat           string `json:"lat"`
-	Lng           string `json:"lng"`
-	CreatedAt     string `json:"created_at" sql:"not null;type:date"`
-	UpdatedAt     string `json:"update_at" sql:"not null;type:date"`
+	Id              string `json:"id"`
+	Coordinate_id   string `json:"coordinate_id"`
+	Send_user_id    string `json:"liked_user_id"`
+	Receive_user_id string `json:"user_id"`
+	Lat             string `json:"lat"`
+	Lng             string `json:"lng"`
+	CreatedAt       string `json:"created_at" sql:"not null;type:date"`
+	UpdatedAt       string `json:"update_at" sql:"not null;type:date"`
 }
 
 // Coordinates コーディネート情報のテーブル情報
@@ -93,7 +93,7 @@ type Ble struct {
 	Status        bool    `json:"status"`
 }
 
-type Liked_user struct {
+type Send_user struct {
 	Gender int    `json:"gender"`
 	Age    string `json:"age"`
 	Height int    `json:"height"`
@@ -102,10 +102,10 @@ type Liked_user struct {
 }
 
 type Map struct {
-	Coordinate_id string        `json:"coordinate_id"`
-	User_id       string        `json:"user_id"`
-	Image         string        `json:"image"`
-	Liked_users   []*Liked_user `json:"liked_users"`
+	Coordinate_id string       `json:"coordinate_id"`
+	User_id       string       `json:"user_id"`
+	Image         string       `json:"image"`
+	Send_users    []*Send_user `json:"liked_users"`
 }
 
 type Maps struct {
