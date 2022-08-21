@@ -14,8 +14,9 @@ import (
 func Like(w http.ResponseWriter, r *http.Request) {
 	db, err := createsql.SqlConnect()
 	if err != nil {
-		json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-		fmt.Fprintln(w, json_str)
+		json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+		json, _ := json.Marshal(json_str)
+		fmt.Fprintln(w, string(json))
 		return
 	} else {
 		log.Print("seikou!")
@@ -32,28 +33,33 @@ func Like(w http.ResponseWriter, r *http.Request) {
 
 			err = db.Where("user_id = ?", r.URL.Query().Get("user_id")).Find(&result_test).Error
 			if err != nil {
-				json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-				fmt.Fprintln(w, json_str)
+				json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+				json, _ := json.Marshal(json_str)
+				fmt.Fprintln(w, string(json))
 				return
 			}
 
 			err = db.Where("user_id = ?", r.URL.Query().Get("user_id")).Find(&result).Error
 			if err != nil {
-				json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-				fmt.Fprintln(w, json_str)
+				json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+				json, _ := json.Marshal(json_str)
+				fmt.Fprintln(w, string(json))
 				return
 			}
 		} else if r.URL.Query().Get("public") != "" {
-			err = db.Where("public = ?", r.URL.Query().Get("public")).Find(&result_test).Error
+
+			err = db.Where("public = ?", 1).Find(&result_test).Error
 			if err != nil {
-				json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-				fmt.Fprintln(w, json_str)
+				json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+				json, _ := json.Marshal(json_str)
+				fmt.Fprintln(w, string(json))
 				return
 			}
-			err = db.Where("public = ?", r.URL.Query().Get("public")).Find(&result).Error
+			err = db.Where("public = ?", 1).Find(&result).Error
 			if err != nil {
-				json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-				fmt.Fprintln(w, json_str)
+				json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+				json, _ := json.Marshal(json_str)
+				fmt.Fprintln(w, string(json))
 				return
 			}
 		}
@@ -72,23 +78,13 @@ func Like(w http.ResponseWriter, r *http.Request) {
 		liked_data := []*model.Map{}
 		for i := 0; i < len(coordinate_list); i++ {
 
-			/*
-				//エラーがでた時に返すよう
-				result1_test := model.Likes{}
-				err = db.Where("coordinate_id = ?", coordinate_list[i].Coordinate_id).Find(&result1_test).Error
-				if err != nil {
-					json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-					fmt.Fprintln(w, json_str)
-					return
-				}
-			*/
-
 			//服をいいねした人のuser_idとすれ違った位置を取得
 			result1 := []*model.Likes{}
 			err = db.Where("coordinate_id = ?", coordinate_list[i].Coordinate_id).Find(&result1).Error
 			if err != nil {
-				json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-				fmt.Fprintln(w, json_str)
+				json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+				json, _ := json.Marshal(json_str)
+				fmt.Fprintln(w, string(json))
 				return
 			}
 
@@ -99,8 +95,9 @@ func Like(w http.ResponseWriter, r *http.Request) {
 				result2 := model.Users{}
 				err = db.Where("id = ?", result1[j].Liked_user_id).First(&result2).Error
 				if err != nil {
-					json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-					fmt.Fprintln(w, json_str)
+					json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+					json, _ := json.Marshal(json_str)
+					fmt.Fprintln(w, string(json))
 					return
 				}
 
@@ -110,7 +107,7 @@ func Like(w http.ResponseWriter, r *http.Request) {
 			liked_data = append(liked_data, &model.Map{Coordinate_id: coordinate_list[i].Coordinate_id, User_id: coordinate_list[i].User_id, Image: coordinate_list[i].Image, Liked_users: liked_user})
 
 		}
-		liked_data_array := model.Maps{Maps: liked_data, Status: "true"}
+		liked_data_array := model.Maps{Maps: liked_data, Status: true}
 		json, err := json.Marshal(liked_data_array)
 		if err != nil {
 			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`

@@ -16,7 +16,7 @@ import (
 func Login(w http.ResponseWriter, r *http.Request) {
 	db, err := createsql.SqlConnect()
 	if err != nil {
-		json_str := &model.Response{Status: false, Message: string(err.Error())}
+		json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
 		json, _ := json.Marshal(json_str)
 		fmt.Fprintln(w, string(json))
 		return
@@ -52,8 +52,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		result := model.Users{}
 		err = db.Where("mail = ?", r.URL.Query().Get("mail")).Find(&result).Error
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		}
 		result1 := model.UsersAddStatus{}
@@ -66,7 +67,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		result1.Mail = result.Mail
 		result1.Icon = result.Icon
 
-		result1.Status = "true"
+		result1.Status = true
 
 		json, err := json.Marshal(result1)
 		if err != nil {
@@ -82,8 +83,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		// リクエストボディを読み込む
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		}
 		//構造体を定義
@@ -92,14 +94,16 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		// jsonを構造体に変換
 		err = json.Unmarshal(body, &user)
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		}
 		sid, err := shortid.New(1, shortid.DefaultABC, 2342)
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		}
 		shortId := sid.MustGenerate()
@@ -117,16 +121,18 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			UpdatedAt: createsql.GetDate(),
 		}).Error
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 			/*
 				json_str := `{"status":false,"message":"` + string(error.Error()) + `"}`
 				fmt.Fprintln(w, json_str)
 			*/
 		} else {
-			json_str := `{"status":"true","id":"` + shortId + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.UserResponse{Status: true, Id: shortId}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 		}
 		createsql.ShowUser(db)
 
@@ -136,8 +142,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 func UsersMe(w http.ResponseWriter, r *http.Request) {
 	db, err := createsql.SqlConnect()
 	if err != nil {
-		json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-		fmt.Fprintln(w, json_str)
+		json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+		json, _ := json.Marshal(json_str)
+		fmt.Fprintln(w, string(json))
 		return
 	} else {
 		log.Print("seikou!")
@@ -149,8 +156,9 @@ func UsersMe(w http.ResponseWriter, r *http.Request) {
 		// リクエストボディを読み込む
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		}
 		//構造体を定義
@@ -159,8 +167,9 @@ func UsersMe(w http.ResponseWriter, r *http.Request) {
 		// jsonを構造体に変換
 		err = json.Unmarshal(body, &user)
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		}
 		err = db.Model(model.Users{}).Where("id = ?", user.Id).Updates(model.Users{
@@ -172,14 +181,15 @@ func UsersMe(w http.ResponseWriter, r *http.Request) {
 			UpdatedAt: createsql.GetDate(),
 		}).Error
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 
-			//fmt.Fprintln(w, "status:false")
 		} else {
-			json_str := `{"status":"true"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.TrueResponse{Status: true}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 		}
 		createsql.ShowUser(db)
 	}
