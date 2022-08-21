@@ -87,7 +87,7 @@ type CoordinatesAdd struct {
 	Ble     string `json:"ble"`
 	Public  int    `json:"public"`
 	Image   string `json:"image"`
-	Items   []Item `json:items`
+	Items   []Item `json:"items"`
 }
 
 //服の情報
@@ -101,8 +101,8 @@ type Ble struct {
 	Coordinate_id string  `json:"coordinate_id"`
 	Image         string  `json:"image"`
 	Items         []*Item `json:items`
-	Users         Users   `json:users`
-	Status        string  `json:status`
+	Users         Users   `json:"users"`
+	Status        string  `json:"status"`
 }
 
 type Liked_user struct {
@@ -117,10 +117,15 @@ type Map struct {
 	Coordinate_id string        `json:"coordinate_id"`
 	User_id       string        `json:"user_id"`
 	Image         string        `json:"image"`
-	Liked_users   []*Liked_user `json:liked_users`
+	Liked_users   []*Liked_user `json:"liked_users"`
 }
 
 type Maps struct {
 	Maps   []*Map `json:"map"`
-	Status string `json:status`
+	Status string `json:"status"`
+}
+
+type Response struct {
+	Status  bool   `json:"status"`
+	Message string `json:"message"`
 }

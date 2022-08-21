@@ -16,8 +16,9 @@ import (
 func Login(w http.ResponseWriter, r *http.Request) {
 	db, err := createsql.SqlConnect()
 	if err != nil {
-		json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-		fmt.Fprintln(w, json_str)
+		json_str := &model.Response{Status: false, Message: string(err.Error())}
+		json, _ := json.Marshal(json_str)
+		fmt.Fprintln(w, string(json))
 		return
 	} else {
 		log.Print("seikou!")

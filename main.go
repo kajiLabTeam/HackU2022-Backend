@@ -25,6 +25,8 @@ func main() {
 	//postLikes(db)
 	//postCoordinate(db)
 	//getBle(db)
+
+	//データベースの中身を全て消す
 	//createsql.Delete(db)
 	//既に作られているuserテーブルの確認
 	fmt.Println("user")
