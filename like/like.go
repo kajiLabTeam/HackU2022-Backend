@@ -28,16 +28,16 @@ func Like(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		result_test := model.Coordinates{}
 		result := []*model.Coordinates{}
-		if r.URL.Query().Get("id") != "" {
+		if r.URL.Query().Get("user_id") != "" {
 
-			err = db.Where("user_id = ?", r.URL.Query().Get("id")).Find(&result_test).Error
+			err = db.Where("user_id = ?", r.URL.Query().Get("user_id")).Find(&result_test).Error
 			if err != nil {
 				json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
 				fmt.Fprintln(w, json_str)
 				return
 			}
 
-			err = db.Where("user_id = ?", r.URL.Query().Get("id")).Find(&result).Error
+			err = db.Where("user_id = ?", r.URL.Query().Get("user_id")).Find(&result).Error
 			if err != nil {
 				json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
 				fmt.Fprintln(w, json_str)

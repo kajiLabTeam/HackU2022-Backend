@@ -35,9 +35,14 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 		result_test := model.Coordinates{}
 		err := db.Where("ble = ? AND put_flag = ?", r.URL.Query().Get("ble"), 2).Find(&result_test).Error
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
-
+			/*
+				json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
+				fmt.Fprintln(w, json_str)
+				fmt.Fprintln(w, "unti")
+			*/
+			json_str := &model.Response{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		}
 		result := []*model.Coordinates{}
@@ -109,7 +114,7 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintln(w, string(json))
 		*/
 
-		//全てのput_flagを１にする
+		//登録する人のput_flagを１にする
 		createsql.UpdatePutFlag(db, clothes.User_id)
 		//shortid作成
 		sid, err := shortid.New(1, shortid.DefaultABC, 2342)
@@ -178,16 +183,7 @@ func CoordinatesLike(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintln(w, json_str)
 			return
 		}
-		//fmt.Fprintln(w, string(body))
-		/*
-			//構造体をjsonに変換
-			json, err := json.Marshal(clothes)
-			if err != nil {
-				fmt.Fprintf(w, "Error: %v", err)
-				return
-			}
-			fmt.Fprintln(w, string(json))
-		*/
+
 		//shortid作成
 		sid, err := shortid.New(1, shortid.DefaultABC, 2342)
 		if err != nil {
