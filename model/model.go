@@ -28,7 +28,7 @@ type UsersAddStatus struct {
 	Uuid   string `json:"uuid"`
 	Mail   string `json:"mail"`
 	Icon   string `json:"icon"`
-	Status string `json:"status"`
+	Status bool   `json:"status"`
 }
 
 // Coordinates コーディネート情報のテーブル情報
@@ -69,23 +69,11 @@ type Requestuser struct {
 	Icon   string `json:"icon"`
 }
 
-/*
-// 服の情報
-type Clothes struct {
-	User_id  string `json:"user_id"`
-	Image    string `json:"image"`
-	Category string `json:"category"`
-	Brand    string `json:"brand"`
-	Price    string `json:"price"`
-	Public   int    `json:"public"`
-}
-*/
-
 //服のコーディネート情報
 type CoordinatesAdd struct {
 	User_id string `json:"user_id"`
 	Ble     string `json:"ble"`
-	Public  int    `json:"public"`
+	Public  bool   `json:"public"`
 	Image   string `json:"image"`
 	Items   []Item `json:"items"`
 }
@@ -102,7 +90,7 @@ type Ble struct {
 	Image         string  `json:"image"`
 	Items         []*Item `json:items`
 	Users         Users   `json:"users"`
-	Status        string  `json:"status"`
+	Status        bool    `json:"status"`
 }
 
 type Liked_user struct {
@@ -122,10 +110,17 @@ type Map struct {
 
 type Maps struct {
 	Maps   []*Map `json:"map"`
-	Status string `json:"status"`
+	Status bool   `json:"status"`
 }
 
-type Response struct {
+type ErrorResponse struct {
 	Status  bool   `json:"status"`
 	Message string `json:"message"`
+}
+type UserResponse struct {
+	Status bool   `json:"status"`
+	Id     string `json:"id"`
+}
+type TrueResponse struct {
+	Status bool `json:"status"`
 }

@@ -17,8 +17,9 @@ import (
 func Coordinates(w http.ResponseWriter, r *http.Request) {
 	db, err := createsql.SqlConnect()
 	if err != nil {
-		json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-		fmt.Fprintln(w, json_str)
+		json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+		json, _ := json.Marshal(json_str)
+		fmt.Fprintln(w, string(json))
 		return
 	} else {
 		log.Print("seikou!")
@@ -33,23 +34,19 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 		//クエリパラメータのbleUuidに一致していて、尚且つ今きている服の情報を取得
 		//配列の構造体で受け取るとエラーが判定されないため一度ここで該当するデータがあるか判定する
 		result_test := model.Coordinates{}
-		err := db.Where("ble = ? AND put_flag = ?", r.URL.Query().Get("ble"), 2).Find(&result_test).Error
+		err := db.Where("ble = ? AND put_flag = ?", r.URL.Query().Get("ble"), 1).Find(&result_test).Error
 		if err != nil {
-			/*
-				json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-				fmt.Fprintln(w, json_str)
-				fmt.Fprintln(w, "unti")
-			*/
-			json_str := &model.Response{Status: false, Message: string(err.Error())}
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
 			json, _ := json.Marshal(json_str)
 			fmt.Fprintln(w, string(json))
 			return
 		}
 		result := []*model.Coordinates{}
-		err = db.Where("ble = ? AND put_flag = ?", r.URL.Query().Get("ble"), 2).Find(&result).Error
+		err = db.Where("ble = ? AND put_flag = ?", r.URL.Query().Get("ble"), 1).Find(&result).Error
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		}
 		//fmt.Fprintln(w, result[0])
@@ -57,8 +54,9 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 		result1 := model.Users{}
 		err = db.Where("id = ?", result[0].User_id).First(&result1).Error
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		}
 
@@ -71,7 +69,7 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 		//p := model.Item{Category: "category", Brand: "brand", Price: "price"}
 
 		//服のid、服の写真、服のアイテム、ユーザー情報をまとめた構造体に変換し、json型にする
-		ble := model.Ble{Coordinate_id: result[0].Coordinate_id, Image: result[0].Image, Items: p, Users: result1, Status: "true"}
+		ble := model.Ble{Coordinate_id: result[0].Coordinate_id, Image: result[0].Image, Items: p, Users: result1, Status: true}
 
 		json, err := json.Marshal(ble)
 		if err != nil {
@@ -89,8 +87,9 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 		// リクエストボディを読み込む
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		}
 		//fmt.Fprintln(w, string(body))
@@ -99,29 +98,27 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 		// jsonを構造体に変換
 		err = json.Unmarshal(body, &clothes)
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		}
-		//fmt.Fprintln(w, clothes)
-		/*
-			//構造体をjsonに変換
-			json, err := json.Marshal(clothes)
-			if err != nil {
-				fmt.Fprintf(w, "Error: %v", err)
-				return
-			}
-			fmt.Fprintln(w, string(json))
-		*/
-
 		//登録する人のput_flagを１にする
 		createsql.UpdatePutFlag(db, clothes.User_id)
 		//shortid作成
 		sid, err := shortid.New(1, shortid.DefaultABC, 2342)
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
+		}
+		//publicがtrueのとき1を格納、そうでない時2を格納
+		var public int
+		if clothes.Public {
+			public = 1
+		} else {
+			public = 2
 		}
 		//Coordinate_idを同じ服のとき同じにするため保存しておく
 		shortId := sid.MustGenerate()
@@ -131,8 +128,8 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 			err := db.Create(&model.Coordinates{
 				Coordinate_id: shortId,
 				User_id:       clothes.User_id,
-				Put_flag:      2,
-				Public:        clothes.Public,
+				Put_flag:      1,
+				Public:        public,
 				Image:         clothes.Image,
 				Category:      clothes.Items[i].Category,
 				Brand:         clothes.Items[i].Brand,
@@ -142,13 +139,15 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 				UpdatedAt:     createsql.GetDate(),
 			}).Error
 			if err != nil {
-				json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-				fmt.Fprintln(w, json_str)
+				json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+				json, _ := json.Marshal(json_str)
+				fmt.Fprintln(w, string(json))
 				return
 			}
 		}
-		json_str := `{"status":"true"}`
-		fmt.Fprintln(w, json_str)
+		json_str := &model.TrueResponse{Status: true}
+		json, _ := json.Marshal(json_str)
+		fmt.Fprintln(w, string(json))
 		createsql.ShowCoordinate(db)
 	}
 }
@@ -156,8 +155,9 @@ func Coordinates(w http.ResponseWriter, r *http.Request) {
 func CoordinatesLike(w http.ResponseWriter, r *http.Request) {
 	db, err := createsql.SqlConnect()
 	if err != nil {
-		json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-		fmt.Fprintln(w, json_str)
+		json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+		json, _ := json.Marshal(json_str)
+		fmt.Fprintln(w, string(json))
 		return
 	} else {
 		log.Print("seikou!")
@@ -169,8 +169,9 @@ func CoordinatesLike(w http.ResponseWriter, r *http.Request) {
 		// リクエストボディを読み込む
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		}
 		//fmt.Fprintln(w, string(body))
@@ -179,16 +180,18 @@ func CoordinatesLike(w http.ResponseWriter, r *http.Request) {
 		// jsonを構造体に変換
 		err = json.Unmarshal(body, &like)
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		}
 
 		//shortid作成
 		sid, err := shortid.New(1, shortid.DefaultABC, 2342)
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		}
 		//それぞれのデータをとってきたデータにして登録
@@ -203,12 +206,14 @@ func CoordinatesLike(w http.ResponseWriter, r *http.Request) {
 			UpdatedAt:     createsql.GetDate(),
 		}).Error
 		if err != nil {
-			json_str := `{"status":"false","message":"` + string(err.Error()) + `"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.ErrorResponse{Status: false, Message: string(err.Error())}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 			return
 		} else {
-			json_str := `{"status":"true"}`
-			fmt.Fprintln(w, json_str)
+			json_str := &model.TrueResponse{Status: true}
+			json, _ := json.Marshal(json_str)
+			fmt.Fprintln(w, string(json))
 
 		}
 

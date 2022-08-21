@@ -12,7 +12,7 @@ import (
 //データを更新
 func UpdatePutFlag(db *gorm.DB, user_id string) {
 	db.Model(model.Coordinates{}).Where("user_id = ?", user_id).Updates(model.Coordinates{
-		Put_flag:  1,
+		Put_flag:  2,
 		UpdatedAt: GetDate(),
 	})
 }
