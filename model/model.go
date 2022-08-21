@@ -35,8 +35,8 @@ type UsersAddStatus struct {
 type Likes struct {
 	Id              string `json:"id"`
 	Coordinate_id   string `json:"coordinate_id"`
-	Send_user_id    string `json:"liked_user_id"`
-	Receive_user_id string `json:"user_id"`
+	Send_user_id    string `json:"send_user_id"`
+	Receive_user_id string `json:"receive_user_id"`
 	Lat             string `json:"lat"`
 	Lng             string `json:"lng"`
 	CreatedAt       string `json:"created_at" sql:"not null;type:date"`
@@ -88,7 +88,7 @@ type Item struct {
 type Ble struct {
 	Coordinate_id string  `json:"coordinate_id"`
 	Image         string  `json:"image"`
-	Items         []*Item `json:items`
+	Items         []*Item `json:"items"`
 	Users         Users   `json:"users"`
 	Status        bool    `json:"status"`
 }
@@ -105,7 +105,7 @@ type Map struct {
 	Coordinate_id string       `json:"coordinate_id"`
 	User_id       string       `json:"user_id"`
 	Image         string       `json:"image"`
-	Send_users    []*Send_user `json:"liked_users"`
+	Send_users    []*Send_user `json:"send_users"`
 }
 
 type Maps struct {
