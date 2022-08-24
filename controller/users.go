@@ -43,6 +43,22 @@ func FindUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
+func FindUsersByMail(c *gin.Context) {
+	// Get path pram ":mail"
+	mail := c.Param("mail")
+	var user model.User
+	// Connect database
+	db := database.Connect()
+	defer db.Close()
+	// Find coordinates
+	if err := db.Where("mail = ?", mail).First(&user).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
+	// Response
+	c.JSON(http.StatusOK, user)
+}
+
 func FindUsersById(c *gin.Context) {
 	// Get path pram ":id"
 	id := c.Param("id")
