@@ -20,8 +20,13 @@ func CreateCoordinates(c *gin.Context) {
 	db := database.Connect()
 	defer db.Close()
 	// Create coordinate
-	db.Model(&model.Coordinate{}).Where("put_flag = ?", true).Update("put_flag", false)
-	//database.UpdatePutFlag(db, coordinate.UserID)
+	var user model.User
+	if err := db.Model(&model.User{}).Where("id = ?", coordinate.UserID).First(&user).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
+	db.Model(&model.Coordinate{}).Where("user_id = ?", coordinate.UserID).Update("put_flag", false)
+	coordinate.PutFlag = true
 	coordinate.ID = database.GenerateId()
 	for index := range coordinate.Wears {
 		coordinate.Wears[index].ID = database.GenerateId()
@@ -84,12 +89,17 @@ func FindCoordinatesByUserId(c *gin.Context) {
 func FindCoordinatesByBle(c *gin.Context) {
 	// Get path pram ":id"
 	ble := c.Param("uuid")
+	var user model.User
 	var coordinate model.Coordinate
 	// Connect database
 	db := database.Connect()
 	defer db.Close()
 	// Find coordinates
-	if err := db.Model(&model.Coordinate{}).Preload("Wears").Where("ble = ?", ble).First(&coordinate).Error; err != nil {
+	if err := db.Model(&model.User{}).Where("ble = ?", ble).First(&user).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
+	if err := db.Model(&model.Coordinate{}).Preload("Wears").Where("user_id = ?", user.ID).First(&coordinate).Error; err != nil {
 		c.String(http.StatusNotFound, "Not Found")
 		return
 	}

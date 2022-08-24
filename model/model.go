@@ -8,7 +8,7 @@ import (
 
 type User struct {
 	ID        string    `json:"id"`
-	UUID      string    `json:"uuid"`
+	Ble       string    `json:"ble"`
 	Mail      string    `json:"mail"`
 	Name      string    `json:"name"`
 	Gender    int       `json:"gender"`
@@ -24,7 +24,6 @@ type Coordinate struct {
 	PutFlag   bool      `json:"put_flag" gorm:"default:false"`
 	Public    bool      `json:"public" gorm:"default:false"`
 	Image     string    `json:"image"`
-	Ble       string    `json:"ble"`
 	UserID    string    `json:"user_id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"update_at"`

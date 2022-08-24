@@ -40,6 +40,16 @@ func CreateLikeByCoordinateId(c *gin.Context) {
 	db := database.Connect()
 	defer db.Close()
 	// Create coordinate
+	var user1 model.User
+	if err := db.Model(&model.User{}).Where("id = ?", like.SendUserID).First(&user1).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
+	var user2 model.User
+	if err := db.Model(&model.User{}).Where("id = ?", like.ReceiveUserID).First(&user2).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
 	like.ID = database.GenerateId()
 	like.CoordinateID = id
 	if err := db.Create(&like).Error; err != nil {
