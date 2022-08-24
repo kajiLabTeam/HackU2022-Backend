@@ -63,6 +63,22 @@ func FindCoordinatesById(c *gin.Context) {
 	c.JSON(http.StatusOK, coordinate)
 }
 
+func FindCoordinatesByBle(c *gin.Context) {
+	// Get path pram ":id"
+	ble := c.Param("uuid")
+	var coordinate model.Coordinate
+	// Connect database
+	db := database.Connect()
+	defer db.Close()
+	// Find coordinates
+	if err := db.Model(&model.Coordinate{}).Preload("Wears").Where("ble = ?", ble).First(&coordinate).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
+	// Response
+	c.JSON(http.StatusOK, coordinate)
+}
+
 func UpdateCoordinatesById(c *gin.Context) {
 	// Get path pram ":id"
 	id := c.Param("id")
@@ -76,6 +92,7 @@ func UpdateCoordinatesById(c *gin.Context) {
 	db := database.Connect()
 	defer db.Close()
 	// Update coordinate
+	coordinate.ID = id
 	if err := db.Model(&model.Coordinate{}).Omit("Wears").Where("id = ?", id).Error; err != nil {
 		c.String(http.StatusBadRequest, "Bad request")
 		return
