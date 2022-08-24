@@ -1,5 +1,7 @@
 DROP DATABASE IF EXISTS clothesdb;
 CREATE DATABASE clothesdb character set utf8 collate utf8_general_ci;
+DROP DATABASE IF EXISTS x_clothes;
+CREATE DATABASE x_clothes character set utf8 collate utf8_general_ci;
 
 use clothesdb;
 DROP TABLE IF EXISTS user;

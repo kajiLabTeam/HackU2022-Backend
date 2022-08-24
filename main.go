@@ -1,47 +1,48 @@
 package main
 
 import (
-	"example/coordinate"
-	"example/createsql"
-	"example/like"
-	"example/user"
-	"fmt"
-	"log"
-	"net/http"
+	"xclothes/controller"
+	"xclothes/database"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/gin-gonic/gin"
 )
 
-func main() {
-	// db接続
-	db, err := createsql.SqlConnect()
-	if err != nil {
-		panic(err.Error())
-	} else {
-		log.Print("seikou!")
-	}
+func connectDatabase() {
+	db := database.Connect()
 	defer db.Close()
-	//postProfile(db)
-	//postLikes(db)
-	//postCoordinate(db)
-	//getBle(db)
+	// database.DeleteAll(db)
+	database.Migrate(db)
+	database.ShowUser(db)
+	database.ShowCoordinate(db)
+	database.ShowLike(db)
+}
 
-	//データベースの中身を全て消す
-	//createsql.Delete(db)
-	//既に作られているuserテーブルの確認
-	fmt.Println("user")
-	createsql.ShowUser(db)
-	//coordinateテーブルの確認
-	fmt.Println("coordinate")
-	createsql.ShowCoordinate(db)
-	//likeテーブルの確認
-	fmt.Println("like")
-	createsql.ShowLike(db)
-	//coordinate
-	http.HandleFunc("/coordinate", coordinate.Coordinates)
-	http.HandleFunc("/coordinates/{coordinate_id}/like", coordinate.CoordinatesLike)
-	http.HandleFunc("/login", user.Login)
-	http.HandleFunc("/users/me", user.UsersMe)
-	http.HandleFunc("/likes", like.Like)
-	http.ListenAndServe(":8080", nil)
+func main() {
+	connectDatabase()
+	engine := gin.Default()
+	usersEngine := engine.Group("/users")
+	{
+		usersEngine.POST("", controller.CreateUsers)
+		usersEngine.GET("", controller.FindUsers)
+		usersEngine.GET("/:id", controller.FindUsersById)
+		usersEngine.PUT("/:id", controller.UpdateUsersById)
+		usersEngine.DELETE("/:id", controller.DeleteUsersById)
+	}
+	coordinatesEngine := engine.Group("/coordinates")
+	{
+		coordinatesEngine.POST("", controller.CreateCoordinates)
+		coordinatesEngine.GET("", controller.FindCoordinates)
+		coordinatesEngine.GET("/:id", controller.FindCoordinatesById)
+		coordinatesEngine.PUT("/:id", controller.UpdateCoordinatesById)
+		coordinatesEngine.DELETE("/:id", controller.DeleteCoordinatesById)
+	}
+	LikesEngine := engine.Group("/likes")
+	{
+		LikesEngine.POST("", controller.CreateLikes)
+		LikesEngine.GET("", controller.FindLikes)
+		LikesEngine.GET("/:id", controller.FindLikesById)
+		LikesEngine.PUT("/:id", controller.UpdateLikesById)
+		LikesEngine.DELETE("/:id", controller.DeleteLikesById)
+	}
+	engine.Run(":3000")
 }
