@@ -45,7 +45,7 @@ type Wear struct {
 type Like struct {
 	ID            string    `json:"id"`
 	Lat           float32   `json:"lat"`
-	Lon           float32   `json:"lng"`
+	Lon           float32   `json:"lon"`
 	SendUserID    string    `json:"send_user_id"`
 	ReceiveUserID string    `json:"receive_user_id"`
 	CoordinateID  string    `json:"coordinate_id"`
