@@ -34,6 +34,7 @@ func main() {
 		usersEngine.GET("", controller.FindUsers)
 		usersEngine.GET("/:id", controller.FindUsersById)
 		usersEngine.GET("/mail/:mail", controller.FindUsersByMail)
+		usersEngine.GET("/:id/coordinates", controller.FindCoordinatesByUserId)
 		usersEngine.PUT("/:id", controller.UpdateUsersById)
 		usersEngine.DELETE("/:id", controller.DeleteUsersById)
 	}
