@@ -20,6 +20,7 @@ func CreateCoordinates(c *gin.Context) {
 	db := database.Connect()
 	defer db.Close()
 	// Create coordinate
+	database.UpdatePutFlag(db, coordinate.UserID)
 	coordinate.ID = database.GenerateId()
 	for index := range coordinate.Wears {
 		coordinate.Wears[index].ID = database.GenerateId()
