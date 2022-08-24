@@ -20,7 +20,8 @@ func CreateCoordinates(c *gin.Context) {
 	db := database.Connect()
 	defer db.Close()
 	// Create coordinate
-	database.UpdatePutFlag(db, coordinate.UserID)
+	db.Model(&model.Coordinate{}).Where("put_flag = ?", true).Update("put_flag", false)
+	//database.UpdatePutFlag(db, coordinate.UserID)
 	coordinate.ID = database.GenerateId()
 	for index := range coordinate.Wears {
 		coordinate.Wears[index].ID = database.GenerateId()
@@ -57,6 +58,22 @@ func FindCoordinatesById(c *gin.Context) {
 	defer db.Close()
 	// Find coordinates
 	if err := db.Model(&model.Coordinate{}).Preload("Wears").First(&coordinate, "id = ?", id).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
+	// Response
+	c.JSON(http.StatusOK, coordinate)
+}
+
+func FindCoordinatesByUserId(c *gin.Context) {
+	// Get path pram ":id"
+	id := c.Param("id")
+	// Connect database
+	db := database.Connect()
+	defer db.Close()
+	// Find coordinates
+	var coordinate []model.Coordinate
+	if err := db.Model(&model.Coordinate{}).Find(&coordinate, "user_id = ?", id).Error; err != nil {
 		c.String(http.StatusNotFound, "Not Found")
 		return
 	}
