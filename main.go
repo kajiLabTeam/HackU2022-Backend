@@ -1,9 +1,11 @@
 package main
 
 import (
+	"time"
 	"xclothes/controller"
 	"xclothes/database"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,6 +22,25 @@ func connectDatabase() {
 func main() {
 	connectDatabase()
 	engine := gin.Default()
+
+	// cors設定の適用
+	engine.Use(cors.New(cors.Config{
+		// アクセスを許可したいアクセス元
+		AllowOrigins: []string{"*", "http://localhost:3000"},
+
+		// アクセスを許可したいHTTPメソッド
+		AllowMethods: []string{"*", "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+
+		// 許可したいHTTPリクエストヘッダ
+		AllowHeaders: []string{"*", "Access-Control-Allow-Headers", "Content-Length", "Content-Type", "Authorization"},
+
+		// cookieなどの認証情報を含めるか否か(通常デフォルトfalseなので合わせました)
+		AllowCredentials: false,
+
+		// プリフライトリクエストのキャッシュ時間
+		MaxAge: 12 * time.Hour,
+	}))
+
 	usersEngine := engine.Group("/users")
 	{
 		usersEngine.POST("/signup", controller.CreateUsers)
