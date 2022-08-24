@@ -23,7 +23,9 @@ func main() {
 	engine := gin.Default()
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"*"}
+	config.AllowAllOrigins = true
+	config.AllowHeaders = []string{"origin"}
+
 	engine.Use(cors.New(config))
 
 	usersEngine := engine.Group("/users")
