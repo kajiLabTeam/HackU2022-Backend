@@ -22,7 +22,7 @@ func CreateCoordinates(c *gin.Context) {
 	// Create coordinate
 	var user model.User
 	if err := db.Model(&model.User{}).Where("id = ?", coordinate.UserID).First(&user).Error; err != nil {
-		c.String(http.StatusNotFound, "Not Found")
+		c.String(http.StatusBadRequest, "Bad request : Not Exist UserID")
 		return
 	}
 	db.Model(&model.Coordinate{}).Where("user_id = ?", coordinate.UserID).Update("put_flag", false)
@@ -47,7 +47,7 @@ func FindCoordinates(c *gin.Context) {
 	defer db.Close()
 	// Find coordinates
 	if err := db.Model(&model.Coordinate{}).Preload("Wears").Find(&coordinates).Error; err != nil {
-		c.String(http.StatusNotFound, "Not Found")
+		c.String(http.StatusInternalServerError, "InternalServerError")
 		return
 	}
 	// Response
