@@ -20,6 +20,7 @@ func CreateCoordinates(c *gin.Context) {
 	db := database.Connect()
 	defer db.Close()
 	// Create coordinate
+	//その入力されたuser_idのユーザが見つからなかった時、エラーを返す
 	var user model.User
 	if err := db.Model(&model.User{}).Where("id = ?", coordinate.UserID).First(&user).Error; err != nil {
 		c.String(http.StatusBadRequest, "Bad request : Not Exist UserID")
