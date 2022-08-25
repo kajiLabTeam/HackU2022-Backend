@@ -100,7 +100,7 @@ func FindCoordinatesByBle(c *gin.Context) {
 		c.String(http.StatusNotFound, "Not Found")
 		return
 	}
-	if err := db.Model(&model.Coordinate{}).Preload("Wears").Where("user_id = ?", user.ID).First(&coordinate).Error; err != nil {
+	if err := db.Model(&model.Coordinate{}).Preload("Wears").Where("user_id = ? AND put_flag = ?", user.ID, true).First(&coordinate).Error; err != nil {
 		c.String(http.StatusNotFound, "Not Found")
 		return
 	}
