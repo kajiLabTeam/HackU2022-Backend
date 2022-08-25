@@ -79,7 +79,7 @@ func FindCoordinatesByUserId(c *gin.Context) {
 	defer db.Close()
 	// Find coordinates
 	var coordinate []model.Coordinate
-	if err := db.Model(&model.Coordinate{}).Find(&coordinate, "user_id = ?", id).Error; err != nil {
+	if err := db.Model(&model.Coordinate{}).Preload("Wears").Find(&coordinate, "user_id = ?", id).Error; err != nil {
 		c.String(http.StatusNotFound, "Not Found")
 		return
 	}
