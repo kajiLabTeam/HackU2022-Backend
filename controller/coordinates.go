@@ -115,7 +115,7 @@ func FindCoordinatesByPublic(c *gin.Context) {
 	db := database.Connect()
 	defer db.Close()
 	// Find coordinates
-	if err := db.Model(&model.Coordinate{}).Preload("Wears").Where("public = ?", true).First(&coordinates).Error; err != nil {
+	if err := db.Model(&model.Coordinate{}).Preload("Wears").Where("public = ?", true).Find(&coordinates).Error; err != nil {
 		c.String(http.StatusNotFound, "Not Found")
 		return
 	}
