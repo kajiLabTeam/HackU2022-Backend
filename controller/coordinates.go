@@ -108,6 +108,21 @@ func FindCoordinatesByBle(c *gin.Context) {
 	c.JSON(http.StatusOK, coordinate)
 }
 
+//public=trueになっているcoordinateテーブルが全て帰ってくるもの
+func FindCoordinatesByPublic(c *gin.Context) {
+	var coordinates []model.Coordinate
+	// Connect database
+	db := database.Connect()
+	defer db.Close()
+	// Find coordinates
+	if err := db.Model(&model.Coordinate{}).Preload("Wears").Where("public = ?", true).First(&coordinates).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
+	// Response
+	c.JSON(http.StatusOK, coordinates)
+}
+
 func UpdateCoordinatesById(c *gin.Context) {
 	// Get path pram ":id"
 	id := c.Param("id")

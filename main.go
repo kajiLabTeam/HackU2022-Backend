@@ -36,6 +36,7 @@ func main() {
 		usersEngine.GET("/:id", controller.FindUsersById)
 		usersEngine.GET("/mail/:mail", controller.FindUsersByMail)
 		usersEngine.GET("/:id/coordinates", controller.FindCoordinatesByUserId)
+		usersEngine.GET("/:id/likes", controller.FindLikesByReceiveUserId)
 		usersEngine.PUT("/:id", controller.UpdateUsersById)
 		usersEngine.DELETE("/:id", controller.DeleteUsersById)
 	}
@@ -48,6 +49,7 @@ func main() {
 		coordinatesEngine.GET("/ble/:uuid", controller.FindCoordinatesByBle)
 		coordinatesEngine.GET("/:id/likes", controller.FindLikesByCoordinateId)
 		coordinatesEngine.GET("/public/likes", controller.FindLikesByCoordinatePublic)
+		coordinatesEngine.GET("/public/coordinates", controller.FindCoordinatesByPublic)
 		coordinatesEngine.PUT("/:id", controller.UpdateCoordinatesById)
 		coordinatesEngine.DELETE("/:id", controller.DeleteCoordinatesById)
 	}

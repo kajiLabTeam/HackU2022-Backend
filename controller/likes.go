@@ -118,7 +118,7 @@ func FindLikesByCoordinatePublic(c *gin.Context) {
 	defer db.Close()
 	// Find coordinates
 	if err := db.Where("public = ?", true).Find(&coordinates).Error; err != nil {
-		c.String(http.StatusNotFound, "Not Found 1")
+		c.String(http.StatusNotFound, "Not Found")
 		return
 	}
 	var coordinateIds []string
@@ -130,7 +130,23 @@ func FindLikesByCoordinatePublic(c *gin.Context) {
 	var likes []model.Like
 
 	if err := db.Where("coordinate_id IN (?)", coordinateIds).Find(&likes).Error; err != nil {
-		c.String(http.StatusNotFound, "Not Found 2")
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
+
+	// Response
+	c.JSON(http.StatusOK, likes)
+}
+func FindLikesByReceiveUserId(c *gin.Context) {
+	// Get path pram ":id"
+	id := c.Param("id")
+	var likes []model.Like
+	// Connect database
+	db := database.Connect()
+	defer db.Close()
+	// Find coordinates
+	if err := db.Where("receive_user_id = ?", id).Find(&likes).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
 		return
 	}
 
