@@ -102,6 +102,71 @@ func FindUsersBySendUser(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
+func FindUsersByPublicSendUser(c *gin.Context) {
+	var coordinates []model.Coordinate
+	// Connect database
+	db := database.Connect()
+	defer db.Close()
+	// Find coordinates
+	if err := db.Where("public = ?", true).Find(&coordinates).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
+	var coordinateIds []string
+	for _, coordinate := range coordinates {
+		coordinateIds = append(coordinateIds, coordinate.ID)
+
+	}
+
+	var likes []model.Like
+
+	if err := db.Where("coordinate_id IN (?)", coordinateIds).Find(&likes).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
+
+	var sendusers []string
+	for _, like := range likes {
+		sendusers = append(sendusers, like.SendUserID)
+
+	}
+
+	var users []model.User
+	if err := db.Where("id IN (?)", sendusers).Find(&users).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
+
+	// Response
+	c.JSON(http.StatusOK, users)
+}
+func FindUsersByReceiveUserIdLikesSendUser(c *gin.Context) {
+	// Get path pram ":id"
+	id := c.Param("id")
+	var likes []model.Like
+	// Connect database
+	db := database.Connect()
+	defer db.Close()
+	// Find coordinates
+	if err := db.Where("receive_user_id = ?", id).Find(&likes).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
+	var sendusers []string
+	for _, like := range likes {
+		sendusers = append(sendusers, like.SendUserID)
+
+	}
+	var users []model.User
+	if err := db.Where("id IN (?)", sendusers).Find(&users).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
+
+	// Response
+	c.JSON(http.StatusOK, users)
+}
+
 func UpdateUsersById(c *gin.Context) {
 	// Get path pram ":id"
 	id := c.Param("id")

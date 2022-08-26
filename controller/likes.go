@@ -208,6 +208,7 @@ func FindLikesByReceiveUserId(c *gin.Context) {
 	// Response
 	c.JSON(http.StatusOK, likes)
 }
+
 func UpdateLikesById(c *gin.Context) {
 	// Get path pram ":id"
 	id := c.Param("id")
