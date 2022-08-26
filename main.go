@@ -36,7 +36,6 @@ func main() {
 		usersEngine.GET("/:id", controller.FindUsersById)
 		usersEngine.GET("/mail/:mail", controller.FindUsersByMail)
 		usersEngine.GET("/:id/coordinates", controller.FindCoordinatesByUserId)
-		usersEngine.GET("/:id/likes", controller.FindLikesByReceiveUserId)
 		usersEngine.PUT("/:id", controller.UpdateUsersById)
 		usersEngine.DELETE("/:id", controller.DeleteUsersById)
 	}
@@ -58,6 +57,7 @@ func main() {
 		LikesEngine.POST("", controller.CreateLikes)
 		LikesEngine.GET("", controller.FindLikes)
 		LikesEngine.GET("/:id", controller.FindLikesById)
+		LikesEngine.GET("/:id/likes", controller.FindLikesByReceiveUserId)
 		LikesEngine.PUT("/:id", controller.UpdateLikesById)
 		LikesEngine.DELETE("/:id", controller.DeleteLikesById)
 	}
