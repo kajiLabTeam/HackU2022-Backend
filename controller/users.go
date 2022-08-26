@@ -75,6 +75,33 @@ func FindUsersById(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+//coordinateidをもとにその服を評価したlikesを受け取り、その中からsenduserを取り出しいいねをしたuser情報を返す
+func FindUsersBySendUser(c *gin.Context) {
+	// Get path pram ":id"
+	id := c.Param("id")
+	var likes []model.Like
+	// Connect database
+	db := database.Connect()
+	defer db.Close()
+	// Find Likes
+	if err := db.Where("coordinate_id = ?", id).Find(&likes).Error; err != nil {
+		c.String(http.StatusBadRequest, "Bad request : Not Exist CoordinateID")
+		return
+	}
+	var sendUsers []string
+	for _, senduser := range likes {
+		sendUsers = append(sendUsers, senduser.SendUserID)
+	}
+
+	var users []model.User
+	if err := db.Where("id IN (?)", sendUsers).Find(&users).Error; err != nil {
+		c.String(http.StatusNotFound, "Not Found")
+		return
+	}
+	// Response
+	c.JSON(http.StatusOK, users)
+}
+
 func UpdateUsersById(c *gin.Context) {
 	// Get path pram ":id"
 	id := c.Param("id")
